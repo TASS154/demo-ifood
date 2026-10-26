@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Folha — vendas do iFood e do Anota Aí</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,560;9..144,650&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #efe6d8;
+    --ink: #1c1712;
+    --muted: #6d645b;
+    --line: #e3d5c3;
+    --paper: #fbf6ee;
+    --sheet: #fffdfb;
+    --green: #1b6b43;
+    --green-soft: #e6f5ec;
+    --loss: #a33b2b;
+    --ifood: #ea1d2c;
+    --anota: #e36a12;
+    --amber: #fff4e4;
+    --amber-ink: #8a5a12;
+    --shadow: 0 18px 40px rgba(68, 42, 18, 0.08);
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    min-height: 100vh;
+    color: var(--ink);
+    background:
+      radial-gradient(900px 420px at 8% -10%, rgba(227, 106, 18, 0.12), transparent 60%),
+      radial-gradient(700px 380px at 100% 0%, rgba(234, 29, 44, 0.08), transparent 55%),
+      var(--bg);
+    font-family: "Outfit", "Segoe UI", sans-serif;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+
+  button, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  button:focus-visible, input:focus-visible, summary:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 2px;
+  }
+
+  .app {
+    width: min(1180px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 28px 0 64px;
+  }
+
+  header {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: flex-end;
+    margin-bottom: 22px;
+  }
+
+  .eyebrow {
+    margin: 0 0 4px;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  h1 {
+    margin: 0;
+    font-family: "Fraunces", Palatino, "Palatino Linotype", serif;
+    font-size: 56px;
+    font-weight: 560;
+    letter-spacing: -0.03em;
+    line-height: 0.9;
+  }
+
+  .lede {
+    margin: 10px 0 0;
+    max-width: 58ch;
+    color: var(--muted);
+  }
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 999px;
+    padding: 7px 12px 7px 10px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .pill i {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: block;
+    background: currentColor;
+  }
+
+  .pill.ifood { color: var(--ifood); }
+  .pill.anota { color: var(--anota); }
+  .pill.off { color: var(--muted); }
+  .pill.off i { background: #b7ada2; }
+
+  .btn {
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: #fbf6ee;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .btn.ghost {
+    background: transparent;
+    color: var(--ink);
+  }
+
+  .btn.small, .btn.tiny {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .btn.tiny {
+    background: transparent;
+    color: var(--ink);
+    border-color: var(--line);
+  }
+
+  .btn.ifood {
+    background: var(--ifood);
+    border-color: var(--ifood);
+    color: white;
+  }
+
+  .btn.anota {
+    background: var(--anota);
+    border-color: var(--anota);
+    color: white;
+  }
+
+  .btn:hover { transform: translateY(-1px); }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  .step {
+    background: rgba(255, 253, 251, 0.55);
+    border: 1px solid rgba(227, 213, 195, 0.9);
+    border-radius: 14px;
+    padding: 12px 14px;
+  }
+
+  .step b {
+    display: block;
+    font-family: "Fraunces", Palatino, serif;
+    font-weight: 560;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .kpis {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .kpi {
+    background: var(--paper);
+    border-radius: 16px;
+    padding: 14px 16px 12px;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    box-shadow: var(--shadow);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .kpi.hero {
+    background: #1c1712;
+    color: #f6efe4;
+  }
+
+  .kpi span {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+
+  .kpi.hero span { color: #cbbba6; }
+
+  .kpi strong {
+    display: block;
+    margin-top: 6px;
+    font-family: "Fraunces", Palatino, serif;
+    font-size: 32px;
+    font-weight: 560;
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .kpi em {
+    display: block;
+    margin-top: 2px;
+    font-style: normal;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .kpi.hero em { color: #d9cbb8; }
+
+  .delta {
+    position: absolute;
+    right: 14px;
+    top: 14px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #8ee0b2;
+    opacity: 0;
+  }
+
+  .delta.show { animation: rise 1.1s ease; }
+
+  @keyframes rise {
+    0% { opacity: 0; transform: translateY(6px); }
+    20% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-10px); }
+  }
+
+  .mix {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: -2px 0 16px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .bar {
+    flex: 1;
+    display: flex;
+    height: 8px;
+    border-radius: 99px;
+    overflow: hidden;
+    background: #e5d9c8;
+  }
+
+  .bar .ifood { background: var(--ifood); }
+  .bar .anota { background: var(--anota); }
+
+  .split {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 300px;
+    gap: 14px;
+    align-items: start;
+    min-width: 0;
+  }
+
+  .panel {
+    background: var(--sheet);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    min-width: 0;
+  }
+
+  .panel-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: center;
+    padding: 14px 16px 0;
+    flex-wrap: wrap;
+  }
+
+  .panel-head h2, .products h2 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 650;
+  }
+
+  .quiet {
+    margin: 2px 0 0;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .tabs, .filters { display: flex; gap: 6px; flex-wrap: wrap; }
+
+  .tab, .filter {
+    border: 1px solid var(--line);
+    background: transparent;
+    border-radius: 999px;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--muted);
+  }
+
+  .tab[aria-pressed="true"], .filter[aria-pressed="true"] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: #fbf6ee;
+  }
+
+  .sheet-scroll {
+    overflow: auto;
+    max-height: min(520px, 70vh);
+    min-width: 0;
+    padding: 8px 8px 12px;
+  }
+
+  table {
+    width: 100%;
+    min-width: 680px;
+    border-collapse: collapse;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #product-table table { min-width: 820px; }
+
+  th {
+    text-align: left;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    background: var(--sheet);
+    z-index: 1;
+  }
+
+  td {
+    padding: 10px;
+    border-bottom: 1px solid #f1e6d8;
+    vertical-align: middle;
+  }
+
+  th.num, td.num { text-align: right; }
+  td.pos { color: var(--green); font-weight: 700; }
+  td.neg { color: var(--loss); font-weight: 700; }
+
+  tfoot td {
+    border-bottom: none;
+    border-top: 3px double var(--ink);
+    font-weight: 700;
+    padding-top: 12px;
+  }
+
+  tr.flash { animation: flash 1.15s ease; }
+  tr.missing { background: var(--amber); }
+
+  @keyframes flash {
+    0% { background: var(--green-soft); }
+    100% { background: transparent; }
+  }
+
+  tr.missing.flash { animation: flash-amber 1.15s ease; }
+
+  @keyframes flash-amber {
+    0% { background: #ffe1b8; }
+    100% { background: var(--amber); }
+  }
+
+  .mark {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    padding: 2px 8px;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+    white-space: nowrap;
+  }
+
+  .mark.ifood { background: var(--ifood); }
+  .mark.anota { background: var(--anota); }
+
+  .empty {
+    padding: 28px 16px 32px;
+    color: var(--muted);
+    text-align: center;
+  }
+
+  .feed { padding: 14px 14px 16px; position: sticky; top: 12px; }
+  .feed h2 { margin: 0 0 4px; font-size: 16px; }
+  .tickets { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+
+  .ticket {
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 10px 12px;
+    background: #fff;
+  }
+
+  .ticket.pop { animation: pop 0.45s ease; }
+  .ticket.missing { background: var(--amber); border-color: #f0d7b4; }
+
+  @keyframes pop {
+    from { transform: translateY(-8px); opacity: 0; }
+    to { transform: none; opacity: 1; }
+  }
+
+  .ticket-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .ticket strong { display: block; }
+  .ticket .moneyline {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .ticket .moneyline b { color: var(--green); font-weight: 700; }
+  .ticket .moneyline b.neg { color: var(--loss); }
+
+  .products { margin-top: 14px; padding: 16px; }
+
+  .product-layout {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 18px;
+    margin-top: 12px;
+    min-width: 0;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #f7f0e6;
+    border-radius: 14px;
+    padding: 12px;
+  }
+
+  label { font-size: 12px; font-weight: 650; color: var(--muted); }
+  label span { display: block; margin-bottom: 4px; }
+
+  input {
+    width: 100%;
+    border: 1px solid #ddcfc0;
+    background: white;
+    border-radius: 10px;
+    padding: 9px 10px;
+  }
+
+  input::placeholder { color: #b7aa9c; }
+
+  .preview {
+    background: white;
+    border-radius: 10px;
+    padding: 10px;
+    border: 1px dashed #ddcfc0;
+  }
+
+  .preview b {
+    font-family: "Fraunces", Palatino, serif;
+    font-size: 22px;
+    font-weight: 560;
+    display: block;
+  }
+
+  .preview b.neg { color: var(--loss); }
+  .preview b.pos { color: var(--green); }
+
+  .form-error { margin: 0; color: var(--loss); font-size: 13px; min-height: 1.2em; }
+
+  .form-actions { display: flex; gap: 8px; align-items: center; }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 6px; }
+
+  .linkish {
+    border: 0;
+    background: none;
+    padding: 0;
+    color: var(--muted);
+    text-decoration: underline;
+    font-size: 13px;
+  }
+
+  details {
+    margin-top: 18px;
+    color: var(--muted);
+    font-size: 14px;
+  }
+
+  details summary { cursor: pointer; color: var(--ink); font-weight: 600; }
+  details p { max-width: 78ch; }
+
+  .warn {
+    color: var(--amber-ink);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  @media (max-width: 980px) {
+    h1 { font-size: 44px; }
+    header { flex-direction: column; align-items: flex-start; }
+    .controls { justify-content: flex-start; }
+    .steps, .split, .product-layout { grid-template-columns: minmax(0, 1fr); }
+    .kpis { grid-template-columns: 1fr 1fr; }
+    .kpi.hero { grid-column: 1 / -1; }
+    .feed { position: static; }
+    .kpi strong { font-size: 28px; }
+    .app { width: min(1180px, calc(100% - 20px)); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div>
+        <p class="eyebrow">Demonstração · <span id="today"></span></p>
+        <h1>Folha</h1>
+        <p class="lede">Você cadastra o produto com valor e custo. O lucro sai na hora. Quando a venda acontece no iFood ou no Anota Aí, a linha entra nesta folha sozinha — sem alimentar planilha no fim do dia.</p>
+      </div>
+      <div class="controls">
+        <span class="pill ifood" id="pill-ifood"><i></i> iFood recebendo</span>
+        <span class="pill anota" id="pill-anota"><i></i> Anota Aí recebendo</span>
+        <button class="btn ghost" id="toggle-live" type="button">Pausar</button>
+        <button class="btn" id="reset-day" type="button">Recomeçar o dia</button>
+      </div>
+    </header>
+
+    <section class="steps" aria-label="Como funciona">
+      <article class="step"><b>01</b> Cadastra nome, valor de venda e custo. O lucro aparece ali.</article>
+      <article class="step"><b>02</b> O pedido sai no iFood ou no Anota Aí, como já sai hoje.</article>
+      <article class="step"><b>03</b> A folha soma quantidade, faturamento, custo e lucro na hora.</article>
+    </section>
+
+    <section class="kpis" aria-label="Resumo do dia">
+      <article class="kpi hero">
+        <span>Lucro do dia</span>
+        <strong id="kpi-profit">R$ 0,00</strong>
+        <em id="kpi-profit-note">valor − custo</em>
+        <i class="delta" id="delta-profit"></i>
+      </article>
+      <article class="kpi">
+        <span>Faturamento</span>
+        <strong id="kpi-revenue">R$ 0,00</strong>
+        <em id="kpi-orders">0 vendas</em>
+      </article>
+      <article class="kpi">
+        <span>Custo dos produtos</span>
+        <strong id="kpi-cost">R$ 0,00</strong>
+        <em id="kpi-margin">margem —</em>
+      </article>
+      <article class="kpi">
+        <span>Canais</span>
+        <strong id="kpi-channels">0</strong>
+        <em id="kpi-split">iFood e Anota Aí</em>
+      </article>
+    </section>
+
+    <div class="mix" id="mix">
+      <span class="mark ifood">iFood</span>
+      <div class="bar" aria-hidden="true"><div class="ifood" id="bar-ifood"></div><div class="anota" id="bar-anota"></div></div>
+      <span class="mark anota">Anota Aí</span>
+      <span id="mix-label"></span>
+    </div>
+
+    <div class="split">
+      <section class="panel" aria-labelledby="sheet-title">
+        <div class="panel-head">
+          <div>
+            <h2 id="sheet-title">Planilha do dia</h2>
+            <p class="quiet" id="sheet-note"></p>
+          </div>
+          <div>
+            <div class="tabs" role="group" aria-label="Modo da planilha">
+              <button class="tab" type="button" data-view="produto" aria-pressed="true">Por produto</button>
+              <button class="tab" type="button" data-view="pedido" aria-pressed="false">Por pedido</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel-head" style="padding-top:10px">
+          <div class="filters" role="group" aria-label="Filtrar canal">
+            <button class="filter" type="button" data-channel="all" aria-pressed="true">Tudo</button>
+            <button class="filter" type="button" data-channel="ifood" aria-pressed="false">Só iFood</button>
+            <button class="filter" type="button" data-channel="anota" aria-pressed="false">Só Anota Aí</button>
+          </div>
+        </div>
+        <div class="sheet-scroll" id="sheet"></div>
+      </section>
+
+      <aside class="panel feed">
+        <h2>Chegando agora</h2>
+        <p class="quiet">Últimos pedidos dos dois canais. O filtro da planilha não esconde esta lista.</p>
+        <div class="tickets" id="feed"></div>
+      </aside>
+    </div>
+
+    <section class="panel products" aria-labelledby="products-title">
+      <h2 id="products-title">Produtos</h2>
+      <p class="quiet">Cadastra uma vez. As próximas vendas desse item já nascem com custo e lucro.</p>
+      <div class="product-layout">
+        <form id="product-form">
+          <label><span>Nome</span><input name="name" required maxlength="60" placeholder="Ex.: X-Burger" autocomplete="off" /></label>
+          <label><span>Valor de venda</span><input name="price" required inputmode="decimal" placeholder="24,90" autocomplete="off" /></label>
+          <label><span>Custo</span><input name="cost" required inputmode="decimal" placeholder="9,80" autocomplete="off" /></label>
+          <div class="preview" aria-live="polite">
+            <span id="preview-label">Lucro por unidade</span>
+            <b id="preview-value">R$ 0,00</b>
+            <span id="preview-margin">Informe valor e custo</span>
+          </div>
+          <p class="form-error" id="form-error" role="alert"></p>
+          <div class="form-actions">
+            <button class="btn" type="submit" id="form-submit">Cadastrar produto</button>
+            <button class="linkish" type="button" id="form-cancel" hidden>Cancelar</button>
+          </div>
+        </form>
+        <div class="sheet-scroll" id="product-table"></div>
+      </div>
+    </section>
+
+    <details>
+      <summary>Como isso liga na loja de verdade</summary>
+      <p>Esta tela usa pedidos simulados para você ver a folha se preencher. Na versão ligada à operação, o iFood e o Anota Aí avisam cada venda para cá. A folha reconhece o produto cadastrado, aplica o custo e lança faturamento e lucro. O que você faz todo dia na planilha — copiar pedido, quantidade e conta — deixa de ser manual.</p>
+      <p>O lucro desta demo é valor de venda menos custo do produto. Taxa do iFood, embalagem e outras despesas não entram.</p>
+    </details>
+  </div>
+
+<script>
+const KEY = "folha-demo-v1";
+const CHANNEL = {
+  ifood: { label: "iFood", code: "IF" },
+  anota: { label: "Anota Aí", code: "AA" }
+};
+const SEED = [
+  ["X-Burger", 24.9, 9.8, 5],
+  ["X-Salada", 27.9, 11.4, 4],
+  ["X-Bacon", 31.9, 13.6, 4],
+  ["Batata frita G", 16.9, 4.8, 5],
+  ["Refrigerante lata", 8, 3.1, 6],
+  ["Suco natural 300ml", 14, 4.9, 2],
+  ["Açaí 500ml", 22, 8.7, 2],
+  ["Combo burger", 42.9, 18.4, 3]
+];
+const UNKNOWN = [
+  ["Milk-shake", 16.9],
+  ["Brownie", 12.9],
+  ["Água com gás", 6]
+];
+
+const moneyFmt = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
+const pctFmt = new Intl.NumberFormat("pt-BR", { style: "percent", maximumFractionDigits: 0 });
+
+let state;
+let editingId = null;
+let flashId = null;
+let timer = null;
+let bootTimer = null;
+let unknownBag = 0;
+
+const $ = (id) => document.getElementById(id);
+const form = $("product-form");
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, (c) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
+function money(n) {
+  return moneyFmt.format(Number.isFinite(n) ? n : 0);
+}
+
+function uid() {
+  return Math.random().toString(36).slice(2, 9);
+}
+
+function parseMoney(v) {
+  const s = String(v).trim().replace(/\s/g, "").replace(/^R\$\s?/i, "");
+  if (!s) return NaN;
+  if (s.includes(",") && s.includes(".")) return Number(s.replace(/\./g, "").replace(",", "."));
+  if (s.includes(",")) return Number(s.replace(",", "."));
+  return Number(s);
+}
+
+function mulberry32(a) {
+  return function () {
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function pickWeighted(products, rng) {
+  const total = products.reduce((sum, p) => sum + (p.weight || 1), 0);
+  let r = rng() * total;
+  for (const p of products) {
+    r -= p.weight || 1;
+    if (r <= 0) return p;
+  }
+  return products[products.length - 1];
+}
+
+function makeProduct(name, price, cost, weight) {
+  return { id: uid(), name, price, cost, weight: weight || 3 };
+}
+
+function blankState() {
+  return {
+    products: SEED.map(([name, price, cost, weight]) => makeProduct(name, price, cost, weight)),
+    sales: [],
+    seq: { ifood: 1028, anota: 874 },
+    live: true
+  };
+}
+
+function pushSaleRecord(sale) {
+  state.sales.push(sale);
+  if (state.sales.length > 240) state.sales.splice(0, state.sales.length - 240);
+}
+
+function buildSale(partial) {
+  const channel = partial.channel;
+  state.seq[channel] += 1;
+  return {
+    id: uid(),
+    code: `${CHANNEL[channel].code}-${String(state.seq[channel]).padStart(4, "0")}`,
+    channel,
+    at: partial.at,
+    productId: partial.productId || null,
+    name: partial.name,
+    price: partial.price,
+    cost: partial.cost,
+    qty: partial.qty,
+    origin: partial.origin
+  };
+}
+
+function seedDay(target) {
+  const rng = mulberry32(20261026);
+  const now = Date.now();
+  const start = now - 45 * 60 * 1000;
+  const products = target.products;
+  for (let i = 0; i < 16; i++) {
+    const product = pickWeighted(products, rng);
+    const qtyRoll = rng();
+    const qty = qtyRoll < 0.68 ? 1 : qtyRoll < 0.9 ? 2 : 3;
+    pushOnto(target, buildSale({
+      channel: rng() < 0.64 ? "ifood" : "anota",
+      at: Math.round(start + rng() * (now - start - 8000)),
+      productId: product.id,
+      name: product.name,
+      price: product.price,
+      cost: product.cost,
+      qty,
+      origin: "seed"
+    }));
+  }
+  target.sales.sort((a, b) => a.at - b.at);
+}
+
+function pushOnto(target, sale) {
+  target.sales.push(sale);
+}
+
+function load() {
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (!raw) return null;
+    const data = JSON.parse(raw);
+    if (!data || !Array.isArray(data.products) || !Array.isArray(data.sales)) return null;
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+function save() {
+  localStorage.setItem(KEY, JSON.stringify(state));
+}
+
+function visibleSales() {
+  if (ui.channel === "all") return state.sales;
+  return state.sales.filter((s) => s.channel === ui.channel);
+}
+
+function totals(sales) {
+  let revenue = 0;
+  let cost = 0;
+  let knownRevenue = 0;
+  let missing = 0;
+  const byChannel = { ifood: 0, anota: 0 };
+  for (const s of sales) {
+    const line = s.price * s.qty;
+    revenue += line;
+    byChannel[s.channel] += line;
+    if (s.cost == null) missing += 1;
+    else {
+      cost += s.cost * s.qty;
+      knownRevenue += line;
+    }
+  }
+  return {
+    revenue,
+    cost,
+    profit: knownRevenue - cost,
+    margin: knownRevenue > 0 ? (knownRevenue - cost) / knownRevenue : null,
+    count: sales.length,
+    missing,
+    byChannel
+  };
+}
+
+const ui = { view: "produto", channel: "all" };
+
+function renderAll() {
+  renderStatus();
+  renderKpis();
+  renderSheet();
+  renderFeed();
+  renderProducts();
+}
+
+function renderStatus() {
+  const on = state.live && state.products.length > 0;
+  for (const key of ["ifood", "anota"]) {
+    const pill = $(`pill-${key}`);
+    pill.classList.toggle("off", !on);
+    pill.lastChild.textContent = on ? ` ${CHANNEL[key].label} recebendo` : ` ${CHANNEL[key].label} pausado`;
+  }
+  $("toggle-live").textContent = state.live ? "Pausar" : "Retomar";
+}
+
+function renderKpis() {
+  const all = totals(state.sales);
+  const view = totals(visibleSales());
+  $("kpi-profit").textContent = money(view.profit);
+  $("kpi-revenue").textContent = money(view.revenue);
+  $("kpi-cost").textContent = money(view.cost);
+  $("kpi-margin").textContent = view.margin == null ? "margem —" : `margem ${pctFmt.format(view.margin)}`;
+  $("kpi-orders").textContent = view.count === 1 ? "1 venda" : `${view.count} vendas`;
+  const ifoodCount = visibleSales().filter((s) => s.channel === "ifood").length;
+  const anotaCount = visibleSales().filter((s) => s.channel === "anota").length;
+  $("kpi-channels").textContent = String(ifoodCount + anotaCount);
+  $("kpi-split").textContent = `${ifoodCount} no iFood · ${anotaCount} no Anota Aí`;
+  $("kpi-profit-note").textContent = view.missing
+    ? `${view.missing} ${view.missing === 1 ? "venda sem custo" : "vendas sem custo"}, fora do lucro`
+    : "valor de venda − custo do produto";
+
+  const base = all.byChannel.ifood + all.byChannel.anota;
+  const ifoodPct = base ? (all.byChannel.ifood / base) * 100 : 50;
+  $("bar-ifood").style.width = `${ifoodPct}%`;
+  $("bar-anota").style.width = `${100 - ifoodPct}%`;
+  $("mix-label").textContent = base
+    ? `${Math.round(ifoodPct)}% iFood · ${Math.round(100 - ifoodPct)}% Anota Aí`
+    : "sem faturamento ainda";
+
+  const auto = state.sales.filter((s) => s.origin !== "manual").length;
+  $("sheet-note").textContent = auto
+    ? `${auto} ${auto === 1 ? "venda entrou" : "vendas entraram"} sem você digitar a linha.`
+    : "As próximas vendas entram aqui sozinhas.";
+}
+
+function aggregate(sales) {
+  const map = new Map();
+  for (const s of sales) {
+    const key = s.productId || `nome:${s.name}`;
+    if (!map.has(key)) {
+      map.set(key, {
+        key,
+        name: s.name,
+        qty: 0,
+        revenue: 0,
+        cost: 0,
+        missing: 0,
+        productId: s.productId
+      });
+    }
+    const row = map.get(key);
+    row.qty += s.qty;
+    row.revenue += s.price * s.qty;
+    if (s.cost == null) row.missing += s.qty;
+    else row.cost += s.cost * s.qty;
+  }
+  return [...map.values()].sort((a, b) => b.revenue - a.revenue);
+}
+
+function renderSheet() {
+  const sales = visibleSales();
+  const host = $("sheet");
+  if (!sales.length) {
+    host.innerHTML = `<div class="empty">Nenhuma venda neste filtro. Cadastre um produto e lance uma venda, ou retome o movimento.</div>`;
+    return;
+  }
+
+  if (ui.view === "produto") {
+    const rows = aggregate(sales);
+    const t = totals(sales);
+    host.innerHTML = `<table>
+      <thead><tr>
+        <th>Produto</th><th class="num">Qtd</th><th class="num">Faturamento</th>
+        <th class="num">Custo</th><th class="num">Lucro</th><th class="num">Margem</th>
+      </tr></thead>
+      <tbody>
+        ${rows.map((r) => {
+          const profit = r.missing ? null : r.revenue - r.cost;
+          const margin = !r.missing && r.revenue ? (r.revenue - r.cost) / r.revenue : null;
+          const cls = [r.key === flashId ? "flash" : "", r.missing ? "missing" : ""].filter(Boolean).join(" ");
+          return `<tr class="${cls}">
+            <td>${esc(r.name)}${r.missing ? `<div class="warn">Falta custo em ${r.missing} un.</div><button class="btn tiny" type="button" data-action="cost" data-name="${esc(r.name)}" data-price="${r.qty ? r.revenue / r.qty : 0}">Cadastrar custo</button>` : ""}</td>
+            <td class="num">${r.qty}</td>
+            <td class="num">${money(r.revenue)}</td>
+            <td class="num">${r.missing ? "—" : money(r.cost)}</td>
+            <td class="num ${profit == null ? "" : profit >= 0 ? "pos" : "neg"}">${profit == null ? "—" : money(profit)}</td>
+            <td class="num">${margin == null ? "—" : pctFmt.format(margin)}</td>
+          </tr>`;
+        }).join("")}
+      </tbody>
+      <tfoot><tr>
+        <td>Total</td>
+        <td class="num">${rows.reduce((s, r) => s + r.qty, 0)}</td>
+        <td class="num">${money(t.revenue)}</td>
+        <td class="num">${money(t.cost)}</td>
+        <td class="num ${t.profit >= 0 ? "pos" : "neg"}">${money(t.profit)}</td>
+        <td class="num">${t.margin == null ? "—" : pctFmt.format(t.margin)}</td>
+      </tr></tfoot>
+    </table>`;
+    return;
+  }
+
+  const ordered = [...sales].sort((a, b) => b.at - a.at);
+  const t = totals(sales);
+  host.innerHTML = `<table>
+    <thead><tr>
+      <th>Hora</th><th>Origem</th><th>Pedido</th><th>Produto</th>
+      <th class="num">Qtd</th><th class="num">Valor</th><th class="num">Custo</th><th class="num">Lucro</th>
+    </tr></thead>
+    <tbody>
+      ${ordered.map((s) => {
+        const revenue = s.price * s.qty;
+        const cost = s.cost == null ? null : s.cost * s.qty;
+        const profit = cost == null ? null : revenue - cost;
+        const cls = [s.id === flashId ? "flash" : "", s.cost == null ? "missing" : ""].filter(Boolean).join(" ");
+        return `<tr class="${cls}">
+          <td>${clock(s.at)}</td>
+          <td><span class="mark ${s.channel}">${esc(CHANNEL[s.channel].label)}</span></td>
+          <td>${esc(s.code)}</td>
+          <td>${esc(s.name)}${s.cost == null ? `<div><button class="btn tiny" type="button" data-action="cost" data-name="${esc(s.name)}" data-price="${s.price}">Cadastrar custo</button></div>` : ""}</td>
+          <td class="num">${s.qty}</td>
+          <td class="num">${money(revenue)}</td>
+          <td class="num">${cost == null ? "—" : money(cost)}</td>
+          <td class="num ${profit == null ? "" : profit >= 0 ? "pos" : "neg"}">${profit == null ? "—" : money(profit)}</td>
+        </tr>`;
+      }).join("")}
+    </tbody>
+    <tfoot><tr>
+      <td colspan="5">Total do filtro</td>
+      <td class="num">${money(t.revenue)}</td>
+      <td class="num">${money(t.cost)}</td>
+      <td class="num ${t.profit >= 0 ? "pos" : "neg"}">${money(t.profit)}</td>
+    </tr></tfoot>
+  </table>`;
+}
+
+function renderFeed() {
+  const latest = [...state.sales].sort((a, b) => b.at - a.at).slice(0, 5);
+  $("feed").innerHTML = latest.length ? latest.map((s, i) => {
+    const revenue = s.price * s.qty;
+    const profit = s.cost == null ? null : (s.price - s.cost) * s.qty;
+    return `<article class="ticket ${i === 0 && s.id === flashId ? "pop" : ""} ${s.cost == null ? "missing" : ""}">
+      <div class="ticket-top">
+        <span class="mark ${s.channel}">${esc(CHANNEL[s.channel].label)}</span>
+        <span>${clock(s.at)} · ${esc(s.code)}</span>
+      </div>
+      <strong>${s.qty}× ${esc(s.name)}</strong>
+      <div class="moneyline">
+        <span>${money(revenue)}</span>
+        ${profit == null
+          ? `<button class="btn tiny" type="button" data-action="cost" data-name="${esc(s.name)}" data-price="${s.price}">Cadastrar custo</button>`
+          : `<b class="${profit >= 0 ? "" : "neg"}">lucro ${money(profit)}</b>`}
+      </div>
+    </article>`;
+  }).join("") : `<div class="empty">Nenhum pedido ainda.</div>`;
+}
+
+function renderProducts() {
+  const rows = [...state.products].sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
+  $("product-table").innerHTML = rows.length ? `<table>
+    <thead><tr>
+      <th>Produto</th><th class="num">Valor</th><th class="num">Custo</th>
+      <th class="num">Lucro</th><th class="num">Margem</th><th>Simular venda</th><th></th>
+    </tr></thead>
+    <tbody>
+      ${rows.map((p) => {
+        const profit = p.price - p.cost;
+        const margin = p.price > 0 ? profit / p.price : null;
+        return `<tr>
+          <td>${esc(p.name)}</td>
+          <td class="num">${money(p.price)}</td>
+          <td class="num">${money(p.cost)}</td>
+          <td class="num ${profit >= 0 ? "pos" : "neg"}">${money(profit)}</td>
+          <td class="num">${margin == null ? "—" : pctFmt.format(margin)}</td>
+          <td>
+            <div class="actions">
+              <button class="btn small ifood" type="button" data-action="sell" data-id="${p.id}" data-channel="ifood">no iFood</button>
+              <button class="btn small anota" type="button" data-action="sell" data-id="${p.id}" data-channel="anota">no Anota Aí</button>
+            </div>
+          </td>
+          <td>
+            <div class="actions">
+              <button class="linkish" type="button" data-action="edit" data-id="${p.id}">Editar</button>
+              <button class="linkish" type="button" data-action="remove" data-id="${p.id}">Excluir</button>
+            </div>
+          </td>
+        </tr>`;
+      }).join("")}
+    </tbody>
+  </table>` : `<div class="empty">Nenhum produto. Cadastra o primeiro para as vendas terem lucro.</div>`;
+}
+
+function brNumber(n) {
+  return Number(n).toFixed(2).replace(".", ",");
+}
+
+function clock(ts) {
+  return new Date(ts).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+}
+
+function showDelta(amount) {
+  const el = $("delta-profit");
+  const sign = amount >= 0 ? "+" : "−";
+  el.textContent = `${sign}${money(Math.abs(amount))}`;
+  el.classList.remove("show");
+  void el.offsetWidth;
+  el.classList.add("show");
+}
+
+function recordSale({ channel, product, name, price, cost, productId, qty, origin }) {
+  const sale = buildSale({
+    channel,
+    at: Date.now(),
+    productId: product ? product.id : productId || null,
+    name: product ? product.name : name,
+    price: product ? product.price : price,
+    cost: product ? product.cost : cost,
+    qty,
+    origin
+  });
+  pushSaleRecord(sale);
+  flashId = ui.view === "produto" ? (sale.productId || `nome:${sale.name}`) : sale.id;
+  save();
+  renderStatus();
+  renderKpis();
+  renderSheet();
+  renderFeed();
+  if (sale.cost != null) showDelta((sale.price - sale.cost) * sale.qty);
+  return sale;
+}
+
+function randomQty() {
+  const r = Math.random();
+  return r < 0.68 ? 1 : r < 0.9 ? 2 : 3;
+}
+
+function liveTick() {
+  if (!state.live || !state.products.length) return;
+  unknownBag += 1;
+  if (unknownBag % 7 === 0) {
+    const [name, price] = UNKNOWN[unknownBag % UNKNOWN.length];
+    const known = state.products.find((p) => p.name.toLowerCase() === name.toLowerCase());
+    if (!known) {
+      recordSale({
+        channel: Math.random() < 0.62 ? "ifood" : "anota",
+        name,
+        price,
+        cost: null,
+        qty: 1,
+        origin: "live"
+      });
+      return;
+    }
+  }
+  recordSale({
+    channel: Math.random() < 0.62 ? "ifood" : "anota",
+    product: pickWeighted(state.products, Math.random),
+    qty: randomQty(),
+    origin: "live"
+  });
+}
+
+function schedule() {
+  clearInterval(timer);
+  clearTimeout(bootTimer);
+  if (!state.live) return;
+  bootTimer = setTimeout(liveTick, 1600);
+  timer = setInterval(liveTick, 4200);
+}
+
+function updatePreview() {
+  const price = parseMoney(form.price.value);
+  const cost = parseMoney(form.cost.value);
+  const value = $("preview-value");
+  if (!Number.isFinite(price) || !Number.isFinite(cost)) {
+    value.textContent = "R$ 0,00";
+    value.className = "";
+    $("preview-margin").textContent = "Informe valor e custo";
+    return;
+  }
+  const profit = price - cost;
+  value.textContent = money(profit);
+  value.className = profit >= 0 ? "pos" : "neg";
+  $("preview-label").textContent = profit >= 0 ? "Lucro por unidade" : "Prejuízo por unidade";
+  $("preview-margin").textContent = price > 0 ? `Margem ${pctFmt.format(profit / price)}` : "Valor precisa ser maior que zero";
+}
+
+function resetForm() {
+  editingId = null;
+  form.reset();
+  $("form-submit").textContent = "Cadastrar produto";
+  $("form-cancel").hidden = true;
+  $("form-error").textContent = "";
+  $("preview-label").textContent = "Lucro por unidade";
+  updatePreview();
+}
+
+function startEdit(id) {
+  const p = state.products.find((item) => item.id === id);
+  if (!p) return;
+  editingId = id;
+  form.name.value = p.name;
+  form.price.value = brNumber(p.price);
+  form.cost.value = brNumber(p.cost);
+  $("form-submit").textContent = "Salvar alterações";
+  $("form-cancel").hidden = false;
+  $("form-error").textContent = "";
+  updatePreview();
+  form.scrollIntoView({ behavior: "smooth", block: "center" });
+  form.name.focus();
+}
+
+function startCost(name, price) {
+  editingId = null;
+  form.name.value = name;
+  form.price.value = brNumber(price);
+  form.cost.value = "";
+  $("form-submit").textContent = "Cadastrar produto";
+  $("form-cancel").hidden = false;
+  $("form-error").textContent = "";
+  updatePreview();
+  form.scrollIntoView({ behavior: "smooth", block: "center" });
+  form.cost.focus();
+}
+
+function attachKnownCost(product) {
+  let changed = false;
+  for (const sale of state.sales) {
+    if (sale.cost == null && sale.name.toLowerCase() === product.name.toLowerCase()) {
+      sale.cost = product.cost;
+      sale.productId = product.id;
+      changed = true;
+    }
+  }
+  return changed;
+}
+
+form.addEventListener("input", updatePreview);
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const name = form.name.value.trim();
+  const price = parseMoney(form.price.value);
+  const cost = parseMoney(form.cost.value);
+  if (!name) {
+    $("form-error").textContent = "Dê um nome ao produto.";
+    return;
+  }
+  if (!Number.isFinite(price) || price <= 0) {
+    $("form-error").textContent = "Informe o valor de venda.";
+    return;
+  }
+  if (!Number.isFinite(cost) || cost < 0) {
+    $("form-error").textContent = "Informe o custo.";
+    return;
+  }
+
+  if (editingId) {
+    const product = state.products.find((item) => item.id === editingId);
+    if (!product) return;
+    product.name = name;
+    product.price = price;
+    product.cost = cost;
+  } else {
+    const product = makeProduct(name, price, cost, 4);
+    state.products.push(product);
+    attachKnownCost(product);
+  }
+  save();
+  resetForm();
+  renderAll();
+});
+
+$("form-cancel").addEventListener("click", resetForm);
+
+document.body.addEventListener("click", (event) => {
+  const btn = event.target.closest("[data-action], [data-view], [data-channel]");
+  if (!btn) return;
+
+  if (btn.dataset.view) {
+    ui.view = btn.dataset.view;
+    document.querySelectorAll("[data-view]").forEach((el) => {
+      el.setAttribute("aria-pressed", String(el.dataset.view === ui.view));
+    });
+    renderSheet();
+    return;
+  }
+
+  if (btn.dataset.channel && btn.classList.contains("filter")) {
+    ui.channel = btn.dataset.channel;
+    document.querySelectorAll(".filter").forEach((el) => {
+      el.setAttribute("aria-pressed", String(el.dataset.channel === ui.channel));
+    });
+    renderKpis();
+    renderSheet();
+    return;
+  }
+
+  const action = btn.dataset.action;
+  if (action === "sell") {
+    const product = state.products.find((item) => item.id === btn.dataset.id);
+    if (!product) return;
+    recordSale({ channel: btn.dataset.channel, product, qty: 1, origin: "manual" });
+    return;
+  }
+  if (action === "edit") {
+    startEdit(btn.dataset.id);
+    return;
+  }
+  if (action === "remove") {
+    const product = state.products.find((item) => item.id === btn.dataset.id);
+    if (!product) return;
+    if (!confirm(`Excluir ${product.name} do cadastro? As vendas já lançadas continuam na folha.`)) return;
+    state.products = state.products.filter((item) => item.id !== product.id);
+    if (editingId === product.id) resetForm();
+    save();
+    renderAll();
+    schedule();
+    return;
+  }
+  if (action === "cost") {
+    startCost(btn.dataset.name, Number(btn.dataset.price));
+  }
+});
+
+$("toggle-live").addEventListener("click", () => {
+  state.live = !state.live;
+  save();
+  renderStatus();
+  schedule();
+});
+
+$("reset-day").addEventListener("click", () => {
+  const products = state.products;
+  state = blankState();
+  state.products = products;
+  state.sales = [];
+  seedDay(state);
+  flashId = null;
+  save();
+  renderAll();
+  schedule();
+});
+
+function boot() {
+  $("today").textContent = new Date().toLocaleDateString("pt-BR", {
+    weekday: "long",
+    day: "2-digit",
+    month: "long"
+  });
+  state = load();
+  if (!state) {
+    state = blankState();
+    seedDay(state);
+    save();
+  }
+  if (!state.seq) state.seq = { ifood: 1028, anota: 874 };
+  renderAll();
+  updatePreview();
+  schedule();
+}
+
+boot();
+</script>
+</body>
+</html>
